@@ -1,4 +1,5 @@
 # CampusLost - Flask Application Entry Point
+import os
 from flask import Flask, render_template, jsonify
 from flask_cors import CORS
 from models.database import init_database
@@ -7,7 +8,7 @@ from routes.items import items_bp
 from routes.admin import admin_bp
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'campus_lost_found_secret_key_2026'
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'campus_lost_found_secret_key_2026')
 CORS(app)
 
 # Register Blueprints
@@ -74,8 +75,9 @@ if __name__ == '__main__':
     print("Initializing database...")
     init_database()
     
+    # Get port from environment (Render provides this)
+    port = int(os.environ.get('PORT', 5000))
+    
     # Run the Flask app
-    print("Starting CampusLost API server...")
-    print("Server running at: http://localhost:5000")
-    print("Press CTRL+C to stop")
-    app.run(debug=True, host='0.0.0.0', port=5000, use_reloader=False)
+    print(f"Starting CampusLost API server on port {port}...")
+    app.run(host='0.0.0.0', port=port)

@@ -1,9 +1,10 @@
 # Database configuration and initialization (SQLite)
 import sqlite3
 import os
-import bcrypt
 
-DB_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'campus_lost_found.db')
+# Get the directory where this file is located
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DB_PATH = os.path.join(BASE_DIR, 'campus_lost_found.db')
 
 def get_db_connection():
     """Create and return a database connection"""
@@ -17,6 +18,8 @@ def get_db_connection():
 
 def init_database():
     """Initialize the database and create tables if they don't exist"""
+    import bcrypt
+    
     try:
         connection = get_db_connection()
         cursor = connection.cursor()
