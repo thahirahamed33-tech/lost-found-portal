@@ -1,0 +1,702 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CampusLost - College Lost & Found Portal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎓</text></svg>">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header" id="header">
+        <div class="header-container">
+            <a href="/" class="logo">
+                <span class="logo-icon">🎓</span>
+                <span class="logo-text">CampusLost</span>
+            </a>
+            
+            <nav class="nav" id="mainNav">
+                <a href="/" class="nav-link active" data-page="home">Home</a>
+                <a href="/lost" class="nav-link" data-page="lost">Lost Items</a>
+                <a href="/found" class="nav-link" data-page="found">Found Items</a>
+                <a href="/myitems" class="nav-link" data-page="myitems">My Items</a>
+            </nav>
+            
+            <div class="header-actions">
+                <button class="icon-btn notification-btn" id="notificationBtn" onclick="toggleNotifications()">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                        <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                    </svg>
+                    <span class="notification-badge" id="notificationBadge">0</span>
+                </button>
+                
+                <div class="user-section" id="userSection">
+                    <button class="btn btn-secondary" id="loginBtn" onclick="openAuthModal()">Login</button>
+                    <button class="btn btn-primary" id="registerBtn" onclick="openAuthModal('register')">Register</button>
+                </div>
+                
+                <div class="user-dropdown hidden" id="userDropdown">
+                    <button class="user-avatar" onclick="toggleUserMenu()">
+                        <span id="userAvatar">U</span>
+                    </button>
+                    <div class="dropdown-menu" id="dropdownMenu">
+                        <div class="dropdown-header">
+                            <span class="user-name" id="userName">User</span>
+                            <span class="user-email" id="userEmail">user@college.edu</span>
+                        </div>
+                        <div class="dropdown-divider"></div>
+                        <a href="/dashboard">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="3" width="7" height="7"></rect>
+                                <rect x="14" y="3" width="7" height="7"></rect>
+                                <rect x="14" y="14" width="7" height="7"></rect>
+                                <rect x="3" y="14" width="7" height="7"></rect>
+                            </svg>
+                            Dashboard
+                        </a>
+                        <a href="/myitems">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
+                                <line x1="7" y1="7" x2="7.01" y2="7"></line>
+                            </svg>
+                            My Items
+                        </a>
+                        <a href="/admin" id="adminLink">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="3"></circle>
+                                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                            </svg>
+                            Admin Panel
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a href="#" onclick="logout()">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                                <polyline points="16 17 21 12 16 7"></polyline>
+                                <line x1="21" y1="12" x2="9" y2="12"></line>
+                            </svg>
+                            Logout
+                        </a>
+                    </div>
+                </div>
+                
+                <button class="mobile-menu-btn" id="mobileMenuBtn" onclick="toggleMobileMenu()">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Notification Panel -->
+        <div class="notification-panel hidden" id="notificationPanel">
+            <div class="notification-header">
+                <h3>Notifications</h3>
+                <button onclick="markAllRead()">Mark all read</button>
+            </div>
+            <div class="notification-list" id="notificationList">
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content" id="mainContent">
+        
+        <!-- Home Page -->
+        <section class="page active" id="homePage">
+            <!-- Hero Section -->
+            <section class="hero">
+            <div class="hero-bg"></div>
+            <div class="hero-particles">
+                <div class="particle"></div>
+                <div class="particle"></div>
+                <div class="particle"></div>
+                <div class="particle"></div>
+                <div class="particle"></div>
+            </div>
+            <div class="hero-content">
+                <div class="hero-badge">
+                    <span class="pulse"></span>
+                    College Lost & Found
+                </div>
+                <h1 class="hero-title">
+                    Find What You <span class="gradient-text">Lost</span>,<br>
+                    Return What You <span class="gradient-text">Found</span>
+                </h1>
+                <p class="hero-subtitle">
+                    A community-driven platform to reconnect lost items with their owners. 
+                    Report, search, and claim items easily.
+                </p>
+                <div class="hero-actions">
+                    <button class="btn btn-primary btn-lg" onclick="navigateTo('lost')">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <path d="m21 21-4.35-4.35"></path>
+                        </svg>
+                        Find Lost Items
+                    </button>
+                    <button class="btn btn-outline btn-lg" onclick="navigateTo('report')">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <line x1="12" y1="18" x2="12" y2="12"></line>
+                            <line x1="9" y1="15" x2="15" y2="15"></line>
+                        </svg>
+                        Report Item
+                    </button>
+                </div>
+                
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <span class="stat-number" id="totalLostItems">0</span>
+                        <span class="stat-label">Lost Items</span>
+                    </div>
+                    <div class="stat-divider"></div>
+                    <div class="stat-item">
+                        <span class="stat-number" id="totalFoundItems">0</span>
+                        <span class="stat-label">Found Items</span>
+                    </div>
+                    <div class="stat-divider"></div>
+                    <div class="stat-item">
+                        <span class="stat-number" id="totalReunited">0</span>
+                        <span class="stat-label">Reunited</span>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <div class="floating-card card-1">
+                    <span class="card-icon">📱</span>
+                    <span class="card-text">Phone</span>
+                </div>
+                <div class="floating-card card-2">
+                    <span class="card-icon">📚</span>
+                    <span class="card-text">Books</span>
+                </div>
+                <div class="floating-card card-3">
+                    <span class="card-icon">👝</span>
+                    <span class="card-text">Wallet</span>
+                </div>
+                <div class="floating-card card-4">
+                    <span class="card-icon">🔑</span>
+                    <span class="card-text">Keys</span>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Categories Section -->
+        <div class="categories-section">
+            <div class="container">
+                <h2 class="section-title">Browse by Category</h2>
+                <div class="categories-grid">
+                    <div class="category-card" onclick="filterByCategory('electronics')">
+                        <div class="category-icon">💻</div>
+                        <h3>Electronics</h3>
+                        <p>Laptops, Phones, Tablets</p>
+                    </div>
+                    <div class="category-card" onclick="filterByCategory('books')">
+                        <div class="category-icon">📚</div>
+                        <h3>Books</h3>
+                        <p>Textbooks, Notebooks</p>
+                    </div>
+                    <div class="category-card" onclick="filterByCategory('clothing')">
+                        <div class="category-icon">👕</div>
+                        <h3>Clothing</h3>
+                        <p>Jackets, Hoodies, Bags</p>
+                    </div>
+                    <div class="category-card" onclick="filterByCategory('accessories')">
+                        <div class="category-icon">⌚</div>
+                        <h3>Accessories</h3>
+                        <p>Watches, Jewelry</p>
+                    </div>
+                    <div class="category-card" onclick="filterByCategory('wallet')">
+                        <div class="category-icon">👝</div>
+                        <h3>Wallet/Purse</h3>
+                        <p>Wallets, ID Cards</p>
+                    </div>
+                    <div class="category-card" onclick="filterByCategory('other')">
+                        <div class="category-icon">📦</div>
+                        <h3>Other</h3>
+                        <p>Miscellaneous Items</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Recent Items Section -->
+        <div class="recent-section">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">Recent Items</h2>
+                    <div class="section-tabs">
+                        <button class="tab-btn active" data-tab="recent" onclick="switchRecentTab('recent')">All</button>
+                        <button class="tab-btn" data-tab="lost" onclick="switchRecentTab('lost')">Lost</button>
+                        <button class="tab-btn" data-tab="found" onclick="switchRecentTab('found')">Found</button>
+                    </div>
+                </div>
+                <div class="items-grid" id="recentItemsGrid">
+                </div>
+                <div class="view-all">
+                    <button class="btn btn-secondary" onclick="navigateTo('lost')">View All Items</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- How It Works Section -->
+        <div class="how-section">
+            <div class="container">
+                <h2 class="section-title">How It Works</h2>
+                <div class="steps-grid">
+                    <div class="step-card">
+                        <div class="step-number">1</div>
+                        <h3>Report Item</h3>
+                        <p>Post details about your lost or found item with photos and description</p>
+                    </div>
+                    <div class="step-connector"></div>
+                    <div class="step-card">
+                        <div class="step-number">2</div>
+                        <h3>Get Notified</h3>
+                        <p>Receive notifications when matching items are posted or claimed</p>
+                    </div>
+                    <div class="step-connector"></div>
+                    <div class="step-card">
+                        <div class="step-number">3</div>
+                        <h3>Connect</h3>
+                        <p>Contact the finder/owner through our secure messaging system</p>
+                    </div>
+                    <div class="step-connector"></div>
+                    <div class="step-card">
+                        <div class="step-number">4</div>
+                        <h3>Reunite</h3>
+                        <p>Meet up and return the item to its rightful owner</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Lost Items Page -->
+        <section class="page" id="lostPage">
+            <div class="page-header">
+                <div class="container">
+                    <h1>Lost Items</h1>
+                    <p>Find items that have been lost on campus</p>
+                </div>
+            </div>
+            <div class="page-content">
+                <div class="container">
+                    <div class="filters-bar">
+                        <div class="search-box">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <path d="m21 21-4.35-4.35"></path>
+                            </svg>
+                            <input type="text" placeholder="Search lost items..." id="lostSearchInput" oninput="filterItems('lost')">
+                        </div>
+                        <div class="filter-group">
+                            <select id="lostCategoryFilter" onchange="filterItems('lost')">
+                                <option value="">All Categories</option>
+                                <option value="electronics">Electronics</option>
+                                <option value="books">Books</option>
+                                <option value="clothing">Clothing</option>
+                                <option value="accessories">Accessories</option>
+                                <option value="wallet">Wallet/Purse</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="items-grid" id="lostItemsGrid"></div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Found Items Page -->
+        <section class="page" id="foundPage">
+            <div class="page-header">
+                <div class="container">
+                    <h1>Found Items</h1>
+                    <p>Browse items that have been found on campus</p>
+                </div>
+            </div>
+            <div class="page-content">
+                <div class="container">
+                    <div class="filters-bar">
+                        <div class="search-box">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <path d="m21 21-4.35-4.35"></path>
+                            </svg>
+                            <input type="text" placeholder="Search found items..." id="foundSearchInput" oninput="filterItems('found')">
+                        </div>
+                        <div class="filter-group">
+                            <select id="foundCategoryFilter" onchange="filterItems('found')">
+                                <option value="">All Categories</option>
+                                <option value="electronics">Electronics</option>
+                                <option value="books">Books</option>
+                                <option value="clothing">Clothing</option>
+                                <option value="accessories">Accessories</option>
+                                <option value="wallet">Wallet/Purse</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="items-grid" id="foundItemsGrid"></div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- My Items Page -->
+        <section class="page" id="myitemsPage">
+            <div class="page-header">
+                <div class="container">
+                    <h1>My Items</h1>
+                    <p>Manage your reported items and claims</p>
+                </div>
+            </div>
+            <div class="page-content">
+                <div class="container">
+                    <div class="myitems-tabs">
+                        <button class="tab-btn active" data-tab="myLost" onclick="switchMyItemsTab('lost')">My Lost Items</button>
+                        <button class="tab-btn" data-tab="myFound" onclick="switchMyItemsTab('found')">My Found Items</button>
+                        <button class="tab-btn" data-tab="myClaims" onclick="switchMyItemsTab('claims')">My Claims</button>
+                    </div>
+                    <div class="myitems-content" id="myitemsContent"></div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Report Item Page -->
+        <section class="page" id="reportPage">
+            <div class="page-header">
+                <div class="container">
+                    <h1>Report an Item</h1>
+                    <p>Help reunite lost items with their owners</p>
+                </div>
+            </div>
+            <div class="page-content">
+                <div class="container">
+                    <div class="report-form-container">
+                        <div class="report-type-selector">
+                            <button class="type-btn active" data-type="lost" onclick="selectReportType('lost')">
+                                <span class="type-icon">🔍</span>
+                                <span class="type-text">I Lost an Item</span>
+                            </button>
+                            <button class="type-btn" data-type="found" onclick="selectReportType('found')">
+                                <span class="type-icon">✨</span>
+                                <span class="type-text">I Found an Item</span>
+                            </button>
+                        </div>
+                        
+                        <form class="report-form" id="reportForm" onsubmit="submitReport(event)">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="itemName">Item Name *</label>
+                                    <input type="text" id="itemName" required placeholder="e.g., MacBook Pro, Blue Hoodie">
+                                </div>
+                                <div class="form-group">
+                                    <label for="itemCategory">Category *</label>
+                                    <select id="itemCategory" required>
+                                        <option value="">Select Category</option>
+                                        <option value="electronics">Electronics</option>
+                                        <option value="books">Books</option>
+                                        <option value="clothing">Clothing</option>
+                                        <option value="accessories">Accessories</option>
+                                        <option value="wallet">Wallet/Purse</option>
+                                        <option value="other">Other</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="itemDescription">Description *</label>
+                                <textarea id="itemDescription" rows="4" required placeholder="Provide detailed description including color, brand, distinguishing features..."></textarea>
+                            </div>
+                            
+<div class="form-row">
+                                <div class="form-group">
+                                    <label for="itemLocation">Location *</label>
+                                    <select id="itemLocation" required onchange="toggleOtherLocation()">
+                                        <option value="">Select Location</option>
+                                        <option value="Main Hall (Offices, Assembly Hall)">Main Hall (Offices, Assembly Hall)</option>
+                                        <option value="James Hall (Physics, Chemistry)">James Hall (Physics, Chemistry)</option>
+                                        <option value="Jivana Jyoti Block">Jivana Jyoti Block</option>
+                                        <option value="Binghamton Hall (Bio)">Binghamton Hall (Bio)</option>
+                                        <option value="Flint House (English)">Flint House (English)</option>
+                                        <option value="New Building (CS, Management)">New Building (CS, Management)</option>
+                                        <option value="Paul Linder Love Hall (MCA, Data)">Paul Linder Love Hall (MCA, Data)</option>
+                                        <option value="Jones Hall (Exam)">Jones Hall (Exam)</option>
+                                        <option value="Washburn Hall">Washburn Hall</option>
+                                        <option value="Edward Hall">Edward Hall</option>
+                                        <option value="Dudley Hall">Dudley Hall</option>
+                                        <option value="Wallace Hall">Wallace Hall</option>
+                                        <option value="Ladies Hostel">Ladies Hostel</option>
+                                        <option value="Green Canteen">Green Canteen</option>
+                                        <option value="RR Canteem">RR Canteem</option>
+                                        <option value="Library">Library</option>
+                                        <option value="Main Gate">Main Gate</option>
+                                        <option value="Playground">Playground</option>
+                                        <option value="Other">Other (specify)</option>
+                                    </select>
+                                </div>
+                                <div class="form-group" id="otherLocationGroup" style="display: none;">
+                                    <label for="otherLocation">Specify Location *</label>
+                                    <input type="text" id="otherLocation" placeholder="Enter specific location">
+                                </div>
+                                <div class="form-group">
+                                    <label for="itemDate">Date *</label>
+                                    <input type="date" id="itemDate" required>
+                                </div>
+                            </div>
+                            
+                            <div class="form-actions">
+                                <button type="button" class="btn btn-secondary" onclick="navigateTo('/')">Cancel</button>
+                                <button type="submit" class="btn btn-primary">Submit Report</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- User Dashboard -->
+        <section class="page" id="dashboardPage">
+            <div class="page-header">
+                <div class="container">
+                    <h1>Dashboard</h1>
+                    <p>Welcome back, <span id="dashboardUserName">User</span>!</p>
+                </div>
+            </div>
+            <div class="page-content">
+                <div class="container">
+                    <div class="dashboard-stats">
+                        <div class="dash-stat-card">
+                            <div class="dash-stat-icon lost-icon">🔍</div>
+                            <div class="dash-stat-info">
+                                <span class="dash-stat-number" id="myLostCount">0</span>
+                                <span class="dash-stat-label">Lost Items</span>
+                            </div>
+                        </div>
+                        <div class="dash-stat-card">
+                            <div class="dash-stat-icon found-icon">✨</div>
+                            <div class="dash-stat-info">
+                                <span class="dash-stat-number" id="myFoundCount">0</span>
+                                <span class="dash-stat-label">Found Items</span>
+                            </div>
+                        </div>
+                        <div class="dash-stat-card">
+                            <div class="dash-stat-icon claims-icon">📋</div>
+                            <div class="dash-stat-info">
+                                <span class="dash-stat-number" id="myClaimsCount">0</span>
+                                <span class="dash-stat-label">Pending Claims</span>
+                            </div>
+                        </div>
+                        <div class="dash-stat-card">
+                            <div class="dash-stat-icon resolved-icon">✅</div>
+                            <div class="dash-stat-info">
+                                <span class="dash-stat-number" id="myResolvedCount">0</span>
+                                <span class="dash-stat-label">Resolved</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="dashboard-grid">
+                        <div class="dashboard-section">
+                            <h2>Recent Activity</h2>
+                            <div class="activity-list" id="activityList"></div>
+                        </div>
+                        <div class="dashboard-section">
+                            <h2>Quick Actions</h2>
+                            <div class="quick-actions">
+                                <button class="action-btn" onclick="navigateTo('/report'); selectReportType('lost')">
+                                    <span class="action-icon">🔍</span>
+                                    <span>Report Lost Item</span>
+                                </button>
+                                <button class="action-btn" onclick="navigateTo('/report'); selectReportType('found')">
+                                    <span class="action-icon">✨</span>
+                                    <span>Report Found Item</span>
+                                </button>
+                                <button class="action-btn" onclick="navigateTo('/lost')">
+                                    <span class="action-icon">🔎</span>
+                                    <span>Search Lost Items</span>
+                                </button>
+                                <button class="action-btn" onclick="navigateTo('/found')">
+                                    <span class="action-icon">🔎</span>
+                                    <span>Search Found Items</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Admin Dashboard -->
+        <section class="page" id="adminPage">
+            <div class="page-header admin-header">
+                <div class="container">
+                    <h1>Admin Panel</h1>
+                    <p>Manage the Lost & Found system</p>
+                </div>
+            </div>
+            <div class="page-content">
+                <div class="container">
+                    <div class="admin-stats">
+                        <div class="admin-stat-card">
+                            <div class="admin-stat-icon">👥</div>
+                            <div class="admin-stat-info">
+                                <span class="admin-stat-number" id="adminUserCount">0</span>
+                                <span class="admin-stat-label">Total Users</span>
+                            </div>
+                        </div>
+                        <div class="admin-stat-card">
+                            <div class="admin-stat-icon">🔍</div>
+                            <div class="admin-stat-info">
+                                <span class="admin-stat-number" id="adminLostCount">0</span>
+                                <span class="admin-stat-label">Lost Items</span>
+                            </div>
+                        </div>
+                        <div class="admin-stat-card">
+                            <div class="admin-stat-icon">✨</div>
+                            <div class="admin-stat-info">
+                                <span class="admin-stat-number" id="adminFoundCount">0</span>
+                                <span class="admin-stat-label">Found Items</span>
+                            </div>
+                        </div>
+                        <div class="admin-stat-card">
+                            <div class="admin-stat-icon">⏳</div>
+                            <div class="admin-stat-info">
+                                <span class="admin-stat-number" id="adminPendingCount">0</span>
+                                <span class="admin-stat-label">Pending Claims</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="admin-tabs">
+                        <button class="tab-btn active" onclick="switchAdminTab('items')">Manage Items</button>
+                        <button class="tab-btn" onclick="switchAdminTab('users')">Manage Users</button>
+                        <button class="tab-btn" onclick="switchAdminTab('claims')">Manage Claims</button>
+                    </div>
+                    
+                    <div class="admin-content" id="adminContent"></div>
+                </div>
+            </div>
+        </section>
+        
+    </main>
+    
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <span class="logo-icon">🎓</span>
+                    <span class="logo-text">CampusLost</span>
+                    <p>Reuniting college students with their lost belongings since 2024.</p>
+                </div>
+                <div class="footer-links">
+                    <h4>Quick Links</h4>
+                    <a href="/">Home</a>
+                    <a href="/lost">Lost Items</a>
+                    <a href="/found">Found Items</a>
+                    <a href="/report">Report Item</a>
+                </div>
+                <div class="footer-links">
+                    <h4>Categories</h4>
+                    <a href="#" onclick="filterByCategory('electronics')">Electronics</a>
+                    <a href="#" onclick="filterByCategory('books')">Books</a>
+                    <a href="#" onclick="filterByCategory('clothing')">Clothing</a>
+                    <a href="#" onclick="filterByCategory('accessories')">Accessories</a>
+                </div>
+                <div class="footer-links">
+                    <h4>Support</h4>
+                    <a href="#">Help Center</a>
+                    <a href="#">Contact Us</a>
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Terms of Service</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 CampusLost. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- Auth Modal -->
+    <div class="modal-overlay hidden" id="authModal">
+        <div class="modal">
+            <button class="modal-close" onclick="closeAuthModal()">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+            
+            <div class="auth-tabs">
+                <button class="auth-tab active" data-tab="login" onclick="switchAuthTab('login')">Login</button>
+                <button class="auth-tab" data-tab="register" onclick="switchAuthTab('register')">Register</button>
+            </div>
+            
+            <!-- Login Form -->
+            <form class="auth-form" id="loginForm" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" required placeholder="your.email@college.edu">
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" required placeholder="••••••••">
+                </div>
+                <div class="form-row-inline">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="rememberMe">
+                        <span>Remember me</span>
+                    </label>
+                    <a href="#" class="forgot-link">Forgot password?</a>
+                </div>
+                <button type="submit" class="btn btn-primary btn-full">Login</button>
+                
+                <div class="demo-credentials">
+                    <p>Demo Credentials:</p>
+                    <code>admin@campus.edu / admin123</code>
+                    <code>user@college.edu / user123</code>
+                </div>
+            </form>
+            
+            <!-- Register Form -->
+            <form class="auth-form hidden" id="registerForm" onsubmit="handleRegister(event)">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="regName">Full Name</label>
+                        <input type="text" id="regName" required placeholder="John Doe">
+                    </div>
+                    <div class="form-group">
+                        <label for="regPhone">Phone</label>
+                        <input type="tel" id="regPhone" placeholder="+1 (555) 123-4567">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="regEmail">Email *</label>
+                    <input type="email" id="regEmail" required placeholder="your.email@college.edu">
+                </div>
+                <div class="form-group">
+                    <label for="regPassword">Password *</label>
+                    <input type="password" id="regPassword" required placeholder="••••••••" minlength="6">
+                </div>
+                <div class="form-group">
+                    <label for="regConfirmPassword">Confirm Password *</label>
+                    <input type="password" id="regConfirmPassword" required placeholder="••••••••">
+                </div>
+                <button type="submit" class="btn btn-primary btn-full">Create Account</button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+    
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
