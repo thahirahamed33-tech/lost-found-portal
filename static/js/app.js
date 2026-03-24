@@ -897,7 +897,7 @@ function switchAdminTab(tab) {
                     </div>
                 `;
             });
-    } else if (tab === 'users') {
+        } else if (tab === 'users') {
         fetch(`${API_URL}/api/admin/users`, {
             headers: { 'Authorization': `Bearer ${authToken}` }
         })
@@ -907,7 +907,7 @@ function switchAdminTab(tab) {
                 <div class="admin-table">
                     <table>
                         <thead>
-                            <tr><th>Name</th><th>Email</th><th>Role</th><th>Joined</th></tr>
+                            <tr><th>Name</th><th>Email</th><th>Role</th><th>Joined</th><th>Actions</th></tr>
                         </thead>
                         <tbody>
                             ${users.map(user => `
@@ -916,6 +916,9 @@ function switchAdminTab(tab) {
                                     <td>${user.email}</td>
                                     <td><span class="status-badge ${user.role === 'admin' ? 'approved' : 'pending'}">${capitalize(user.role)}</span></td>
                                     <td>${formatDate(user.created_at)}</td>
+                                    <td class="action-buttons">
+                                        <button class="delete" onclick="adminDeleteUser(${user.id})" ${currentUser.id === user.id ? 'disabled title="Cannot delete own account"' : ''}>Delete</button>
+                                    </td>
                                 </tr>
                             `).join('')}
                         </tbody>
@@ -1019,6 +1022,35 @@ async function adminRejectClaim(claimId) {
         loadAdminDashboard();
     } catch (error) {
         showToast('error', 'Error', 'Failed to reject claim');
+    }
+}
+
+async function adminDeleteUser(userId) {
+    if (currentUser.id === userId) {
+        showToast('error', 'Forbidden', 'Cannot delete your own account');
+        return;
+    }
+    
+    if (!confirm(`Delete user "${userId}"? This will also delete their items and claims.`)) {
+        return;
+    }
+    
+    try {
+        const response = await fetch(`${API_URL}/api/admin/users/${userId}`, {
+            method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${authToken}` }
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+            showToast('success', 'User Deleted', 'User and associated data removed');
+            loadAdminDashboard();
+        } else {
+            showToast('error', 'Error', data.error || 'Failed to delete user');
+        }
+    } catch (error) {
+        showToast('error', 'Error', 'Network error');
     }
 }
 
