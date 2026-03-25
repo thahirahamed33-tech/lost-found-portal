@@ -370,18 +370,38 @@ def create_claim():
         if cursor.fetchone():
             return jsonify({'error': 'You have already claimed this item'}), 400
         
-        # Create claim
+# Create claim
+        claim_id = cursor.lastrowid
         cursor.execute("""
             INSERT INTO claims (item_id, user_id, proof, contact)
             VALUES (?, ?, ?, ?)
         """, (item_id, user['user_id'], proof, contact))
+        
+        # Get item owner for notification
+        cursor.execute("SELECT user_id FROM items WHERE id = ?", (item_id,))
+        item_owner_id = cursor.fetchone()[0]
         
         # Update item status
         cursor.execute("UPDATE items SET status = 'claimed' WHERE id = ?", (item_id,))
         
         connection.commit()
         
-        return jsonify({'message': 'Claim submitted successfully'}), 201
+        # Notify item owner about new claim
+        from routes.notifications import notifications_bp
+        cursor.execute("""
+            INSERT INTO notifications (user_id, type, message)
+            VALUES (?, 'claim', ?)
+        """, (item_owner_id, f"New claim submitted for your item! Check admin panel to review."))
+        
+        # Notify claimant about successful submission
+        cursor.execute("""
+            INSERT INTO notifications (user_id, type, message)
+            VALUES (?, 'confirmation', 'Your claim has been submitted successfully. Admin will review it shortly.')
+        """, (user['user_id'],))
+        
+        connection.commit()
+        
+        return jsonify({'message': 'Claim submitted successfully. Notifications sent.', 'claim_id': claim_id}), 201
         
     except Exception as e:
         return jsonify({'error': str(e)}), 500

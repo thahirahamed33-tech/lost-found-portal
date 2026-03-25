@@ -433,7 +433,8 @@ async function submitClaim(event) {
         
         if (response.ok) {
             closeClaimModal();
-            showToast('success', 'Claim Submitted', 'Your claim is pending approval');
+            updateNotificationBadge();
+            showToast('success', 'Claim Submitted', 'Your claim is pending approval. Check notifications for updates.');
         } else {
             showToast('error', 'Error', data.error);
         }

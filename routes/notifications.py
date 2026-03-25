@@ -55,6 +55,70 @@ def get_notifications():
         cursor.close()
         connection.close()
 
+@notifications_bp.route('/notifications/read-all', methods=['PUT'])
+def mark_all_read():
+    token = request.headers.get('Authorization')
+    if not token:
+        return jsonify({'error': 'Authorization required'}), 401
+    
+    user = get_user_from_token(token.replace('Bearer ', ''))
+    if not user:
+        return jsonify({'error': 'Invalid token'}), 401
+    
+    connection = get_db_connection()
+    if not connection:
+        return jsonify({'error': 'Database connection failed'}), 500
+    
+    try:
+        cursor = connection.cursor()
+        
+        cursor.execute("""
+            UPDATE notifications SET read_status = 1 
+            WHERE user_id = ? AND read_status = 0
+        """, (user['user_id'],))
+        
+        connection.commit()
+        
+        return jsonify({'message': 'All notifications marked as read'}), 200
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    finally:
+        cursor.close()
+        connection.close()
+
+@notifications_bp.route('/notifications/<int:notif_id>/read', methods=['PUT'])
+def mark_read(notif_id):
+    token = request.headers.get('Authorization')
+    if not token:
+        return jsonify({'error': 'Authorization required'}), 401
+    
+    user = get_user_from_token(token.replace('Bearer ', ''))
+    if not user:
+        return jsonify({'error': 'Invalid token'}), 401
+    
+    connection = get_db_connection()
+    if not connection:
+        return jsonify({'error': 'Database connection failed'}), 500
+    
+    try:
+        cursor = connection.cursor()
+        
+        cursor.execute("""
+            UPDATE notifications SET read_status = 1 
+            WHERE id = ? AND user_id = ?
+        """, (notif_id, user['user_id']))
+        
+        connection.commit()
+        
+        return jsonify({'message': 'Notification marked as read'}), 200
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    finally:
+        cursor.close()
+        connection.close()
+
 @notifications_bp.route('/notifications', methods=['POST'])
 def create_notification():
     data = request.get_json()
