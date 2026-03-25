@@ -6,7 +6,13 @@ from models.database import init_database
 from routes.auth import auth_bp
 from routes.items import items_bp
 from routes.admin import admin_bp
+from routes.notifications import notifications_bp
 
+app = Flask(__name__)
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'campus_lost_found_secret_key_2026')
+CORS(app)
+
+# Register Blueprints
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'campus_lost_found_secret_key_2026')
 CORS(app)
@@ -15,6 +21,7 @@ CORS(app)
 app.register_blueprint(auth_bp, url_prefix='/api/auth')
 app.register_blueprint(items_bp, url_prefix='/api')
 app.register_blueprint(admin_bp, url_prefix='/api/admin')
+app.register_blueprint(notifications_bp, url_prefix='/api')
 
 # Main routes
 @app.route('/')
